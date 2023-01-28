@@ -24,9 +24,12 @@ async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     HttpServer::new(move || {
+        let cors = actix_cors::Cors::default().allow_any_origin().send_wildcard();
+
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .wrap(middleware::Logger::default())
+            .wrap(cors)
             .route("/", web::get().to(|| async { HttpResponse::Ok().body("welcome!") }))
             .service(handlers::particles)
             .service(handlers::particle_by_id)
