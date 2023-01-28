@@ -3,6 +3,11 @@ use serde::{Deserialize, Serialize};
 use crate::schema::{ particles };
 
 #[derive(Debug, Serialize, Deserialize, Queryable)]
+pub struct Particles {
+  pub particles: Vec<Particle>
+}
+
+#[derive(Debug, Serialize, Deserialize, Queryable)]
 pub struct Particle {
   pub part_id: i32,
   pub part_type: String,

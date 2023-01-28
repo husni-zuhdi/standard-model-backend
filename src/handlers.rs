@@ -5,7 +5,7 @@ use actix_web::{delete, get, post, put, web, HttpResponse, Error};
 use diesel::{PgConnection, QueryDsl};
 use crate::diesel::RunQueryDsl;
 
-use crate::models::{Particle, NewParticle, ParticlePayLoad};
+use crate::models::{Particle, NewParticle, ParticlePayLoad, Particles};
 
 type DbError = Box<dyn std::error::Error + Send + Sync>;
 
@@ -70,11 +70,14 @@ async fn destroy_particle(id: web::Path<i32>, pool: web::Data<DbPool>) -> Result
   Ok(result)
 }
 
-fn find_all_particles(conn: &mut PgConnection) -> Result<Vec<Particle>, DbError> {
+fn find_all_particles(conn: &mut PgConnection) -> Result<Particles, DbError> {
     use crate::schema::particles::dsl::*;
 
     let items = particles.load::<Particle>(conn)?;
-    Ok(items)
+    let particles_item = Particles {
+      particles: items
+    };
+    Ok(particles_item)
 }
 
 fn add_particle(payload: &Json<ParticlePayLoad>, conn: &mut PgConnection) -> Result<Particle, DbError> {
